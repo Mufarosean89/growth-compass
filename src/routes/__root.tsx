@@ -108,13 +108,63 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const nav = [
+  { to: "/", label: "Overview" },
+  { to: "/audience", label: "Audience" },
+  { to: "/geography", label: "Geography" },
+  { to: "/releases", label: "Releases" },
+  { to: "/collaborations", label: "Collaborations" },
+  { to: "/decisions", label: "Decisions" },
+  { to: "/simulator", label: "Growth Simulator" },
+] as const;
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="min-h-screen bg-background">
+        <div className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-8">
+            <Link to="/" className="flex items-center gap-2.5">
+              <span
+                className="flex h-8 w-8 items-center justify-center rounded-md text-sm font-bold text-primary-foreground"
+                style={{ backgroundImage: "var(--gradient-primary)" }}
+              >
+                N
+              </span>
+              <span className="text-sm font-semibold tracking-tight text-foreground">
+                Artist Analytics
+                <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  Sample data
+                </span>
+              </span>
+            </Link>
+            <nav className="-mx-1 flex gap-1 overflow-x-auto pb-1 lg:pb-0">
+              {nav.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  activeOptions={{ exact: item.to === "/" }}
+                  className="whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  activeProps={{ className: "bg-secondary text-foreground" }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+        <footer className="border-t border-border bg-surface">
+          <div className="mx-auto max-w-7xl px-4 py-6 text-xs text-muted-foreground sm:px-6 lg:px-8">
+            All numbers in this application are synthetic sample data and modelled scenarios built for
+            analysis practice. Nothing here represents Nasty C&apos;s actual audience, revenue, or business
+            performance.
+          </div>
+        </footer>
+      </div>
     </QueryClientProvider>
   );
 }
