@@ -251,8 +251,8 @@ export function forecast(series: WeeklyPoint[], metric: Metric, horizon = 12) {
   let num = 0;
   let den = 0;
   for (let i = 0; i < n; i++) {
-    num += (xs[i] - mx) * (ys[i] - my);
-    den += (xs[i] - mx) ** 2;
+    num += (xs[i]! - mx) * (ys[i]! - my);
+    den += (xs[i]! - mx) ** 2;
   }
   const slope = den === 0 ? 0 : num / den;
   const intercept = my - slope * mx;
@@ -260,9 +260,10 @@ export function forecast(series: WeeklyPoint[], metric: Metric, horizon = 12) {
   const sigma = Math.sqrt(resid.reduce((a, r) => a + r * r, 0) / Math.max(1, n - 2));
 
   const history = series.map((p) => ({ date: p.date, actual: p[metric] as number, projected: null as number | null, low: null as number | null, high: null as number | null }));
-  const lastWeek = series[series.length - 1].week;
+  const last = series[series.length - 1]!;
+  const lastWeek = last.week;
   const out = [...history];
-  out[out.length - 1] = { ...out[out.length - 1], projected: series[series.length - 1][metric], low: series[series.length - 1][metric], high: series[series.length - 1][metric] };
+  out[out.length - 1] = { date: last.date, actual: last[metric], projected: last[metric], low: last[metric], high: last[metric] };
   for (let h = 1; h <= horizon; h++) {
     const i = n - 1 + h;
     const mean = intercept + slope * i;
